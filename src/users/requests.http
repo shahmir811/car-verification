@@ -1,0 +1,35 @@
+### Create a new user
+POST http://localhost:3000/auth/signup
+accept: application/json
+content-type: application/json 
+
+{
+  "name": "Saad Bhatti",
+  "email": "saad@gmail.com",
+  "password": "123456"
+}
+
+### Find a particular user with given ID
+GET http://localhost:3000/auth/1
+accept: application/json
+content-type: application/json 
+
+### Find users with mentioned email address
+GET http://localhost:3000/auth?email=owais@gmail.com
+accept: application/json
+content-type: application/json 
+
+### Remove a particular user with the given id
+DELETE http://localhost:3000/auth/3
+accept: application/json
+content-type: application/json 
+
+### Update user
+PATCH http://localhost:3000/auth/1
+accept: application/json
+content-type: application/json 
+
+{
+  "name": "Muhammad Owais",
+  "email": "owais@gmail.com"
+}
