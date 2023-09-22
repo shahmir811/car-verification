@@ -7,6 +7,7 @@ import { JwtService } from '@nestjs/jwt';
 import { scrypt as _scrypt, randomBytes } from 'crypto';
 import { promisify } from 'util';
 
+import { JwtPayload } from './jwt-payload.interface';
 import { UsersService } from './users.service';
 
 const scrypt = promisify(_scrypt);
@@ -38,7 +39,10 @@ export class AuthService {
     return user;
   }
 
-  async signin(email: string, password: string) {
+  async signin(
+    email: string,
+    password: string,
+  ): Promise<{ accessToken: string }> {
     const [user] = await this.usersService.find(email);
 
     if (!user) throw new NotFoundException('User not found');
@@ -50,14 +54,9 @@ export class AuthService {
     if (hash.toString('hex') !== storedPassword)
       throw new BadRequestException('Incorrect password');
 
-    // return user;
-    // return user;
-    // const payload = { ...user };
-    // return {
-    //   access_token: await this.jwtService.signAsync(payload),
-    // };
+    const payload: JwtPayload = { id: user.id, email: user.email };
+    const accessToken = await this.jwtService.signAsync(payload);
 
-    const jwt = await this.jwtService.signAsync({ id: user.id });
-    return jwt;
+    return { accessToken };
   }
 }

@@ -8,16 +8,20 @@ import {
   Patch,
   Post,
   Query,
+  UseGuards,
 } from '@nestjs/common';
 
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UpdateUserDto } from './dtos/update-user.dto';
-import { UserDto } from './dtos/user.dto';
 import { UsersService } from './users.service';
 
 import { Serialize } from '../interceptors/serialize.interceptor';
 import { AuthService } from './auth.service';
+import { CurrentUser } from './decorators/current-user.decorator';
 import { SigninUserDto } from './dtos/signin-user.dto';
+import { UserDto } from './dtos/user.dto';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { User } from './user.entity';
 
 @Controller('auth')
 @Serialize(UserDto)
@@ -27,11 +31,16 @@ export class UsersController {
     private authService: AuthService,
   ) {}
 
+  @Post('/test')
+  @UseGuards(JwtAuthGuard)
+  test(@CurrentUser() user: User) {
+    console.log(user);
+  }
+
   @Post('/signup')
   createUser(@Body() body: CreateUserDto) {
     const { name, email, password } = body;
 
-    // this.usersService.create(name, email, password);
     return this.authService.signup(name, email, password);
   }
 
@@ -39,7 +48,6 @@ export class UsersController {
   signin(@Body() body: SigninUserDto) {
     const { email, password } = body;
 
-    // this.usersService.create(name, email, password);
     return this.authService.signin(email, password);
   }
 
